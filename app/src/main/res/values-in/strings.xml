@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">StoryApp</string>
+    <string name="label_email">Email</string>
+    <string name="label_password">Password</string>
+    <string name="action_login">Masuk</string>
+    <string name="label_name">Nama</string>
+    <string name="action_register">Daftar</string>
+    <string name="error_empty_name">Mohon input nama anda</string>
+    <string name="error_empty_email">Mohon input email anda</string>
+    <string name="error_empty_password">Mohon input password anda</string>
+    <string name="message_register_success">Daftar berhasil</string>
+    <string name="message_unknown_error">Error yang tidak diketahui</string>
+    <string name="title_dialog_error">Waw ada yang salah</string>
+    <string name="label_greeting_user">Halo, %1$s..</string>
+    <string name="action_camera">Kamera</string>
+    <string name="action_gallery">Gallery</string>
+    <string name="hint_description">Deskripsi Cerita</string>
+    <string name="action_upload">Unggah Cerita</string>
+    <string name="message_failed_take_picture">Gagal Unggah</string>
+    <string name="message_not_permitted">Permisi tidak diijinkan</string>
+    <string name="title_choose_picture">Pilih gambar</string>
+    <string name="title_new_story">Tambah Cerita Baru</string>
+    <string name="error_desc_empty">Deskripsi tidak boleh kosong</string>
+    <string name="message_upload_success">Unggah berhasil</string>
+    <string name="title_upload_info">Unggah info</string>
+    <string name="lorem_ipsum">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque lobortis nunc nec sodales consectetur. Sed eget auctor quam. Nulla facilisi. Etiam vitae nulla sed arcu varius tempus.</string>
+    <string name="label_dont_have_account">Tidak punya account ?</string>
+    <string name="label_register_here">Daftar disini</string>
+    <string name="label_logout">Keluar</string>
+    <string name="label_form_register">Form Pendaftaran</string>
+    <string name="label_already_have_account">Sudah punya account ?</string>
+    <string name="label_login_here">Masuk disini</string>
+    <string name="appwidget_text">EXAMPLE</string>
+    <string name="add_widget">Add widget</string>
+    <string name="app_widget_description">This is an app widget description</string>
+</resources>
