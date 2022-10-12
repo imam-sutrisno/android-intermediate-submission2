@@ -56,11 +56,11 @@ class StoryDataSource @Inject constructor(
         }
     }
 
-    suspend fun addNewStory(token: String, file: MultipartBody.Part, description: RequestBody): Flow<ApiResponse<AddStoryResponse>> {
+    suspend fun addNewStory(token: String, file: MultipartBody.Part, description: RequestBody, lat: RequestBody, lon: RequestBody): Flow<ApiResponse<AddStoryResponse>> {
         return flow {
             try {
                 emit(ApiResponse.Loading)
-                val response = storyService.addNewStory(token, file, description)
+                val response = storyService.addNewStory(token, file, description, lat, lon)
                 if (!response.error) {
                     emit(ApiResponse.Success(response))
                 } else {

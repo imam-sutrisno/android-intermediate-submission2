@@ -86,17 +86,6 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
 
-//        try {
-//            var success : Boolean = mMap.setMapStyle(
-//                MapStyleOptions.loadRawResourceStyle(this, R.raw.map_styles)
-//            )
-//            if (!success) {
-//                Timber.tag(TAG).e("Style parsing failed")
-//            }
-//        } catch (ex: Exception) {
-//            Timber.tag(TAG).e(ex.message.toString())
-//        }
-
         mMap.setMapStyle(
             MapStyleOptions.loadRawResourceStyle(
                 this, R.raw.map_styles
@@ -146,17 +135,13 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
                         response.data.listStory.forEachIndexed { _, element ->
                             val lastLatLng = LatLng(element.lat, element.lon)
 
-                            mMap.addMarker(MarkerOptions().position(lastLatLng).title(element.id))
+                            mMap.addMarker(
+                                MarkerOptions().position(lastLatLng).title(element.name)
+                                    .snippet(element.description)
+                            )
                             boundsBuilder.include(lastLatLng)
                             val bounds: LatLngBounds = boundsBuilder.build()
-                            mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, 64))
-
-                            mMap.setOnInfoWindowClickListener {
-                                val intent = Intent(this, DetailStoryActivity::class.java)
-                                intent.putExtra(BUNDLE_KEY_STORY, element)
-
-                                startActivity(intent)
-                            }
+                            mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, 62))
                         }
                     } else {
                         showToast(getString(R.string.message_story_with_location_not_found))

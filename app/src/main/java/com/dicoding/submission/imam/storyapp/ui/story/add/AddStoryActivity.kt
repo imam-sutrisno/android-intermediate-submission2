@@ -1,10 +1,13 @@
 package com.dicoding.submission.imam.storyapp.ui.story.add
 
+import android.Manifest
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.content.Intent.ACTION_GET_CONTENT
 import android.content.pm.PackageManager
 import android.graphics.BitmapFactory
+import android.location.Location
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -29,6 +32,7 @@ import com.dicoding.submission.imam.storyapp.utils.ext.showOkDialog
 import com.dicoding.submission.imam.storyapp.utils.ext.showToast
 import com.dicoding.submission.imam.storyapp.utils.reduceFileImage
 import com.dicoding.submission.imam.storyapp.utils.uriToFile
+import com.google.android.gms.location.FusedLocationProviderClient
 import dagger.hilt.android.AndroidEntryPoint
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
@@ -36,13 +40,15 @@ import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import java.io.File
+import com.dicoding.submission.imam.storyapp.utils.MapsUtils.getAddressName
+import com.google.android.gms.location.LocationServices
 
 @AndroidEntryPoint
 class AddStoryActivity : AppCompatActivity() {
 
     private val storyViewModel: StoryViewModel by viewModels()
 
-    private var _activityAddStoryBinding : ActivityAddStoryBinding? = null
+    private var _activityAddStoryBinding: ActivityAddStoryBinding? = null
     private val binding get() = _activityAddStoryBinding!!
 
     private var uploadFile: File? = null
@@ -50,14 +56,22 @@ class AddStoryActivity : AppCompatActivity() {
 
     private lateinit var pref: SessionManager
 
+    private var location: Location? = null
+    private lateinit var fusedLocation: FusedLocationProviderClient
+
     companion object {
         fun start(context: Context) {
             val intent = Intent(context, AddStoryActivity::class.java)
             context.startActivity(intent)
         }
 
-        private val REQUIRED_PERMISSIONS = arrayOf(android.Manifest.permission.CAMERA)
+        private val REQUIRED_PERMISSIONS = arrayOf(
+            Manifest.permission.CAMERA,
+            Manifest.permission.ACCESS_COARSE_LOCATION,
+            Manifest.permission.ACCESS_FINE_LOCATION
+        )
     }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -74,6 +88,8 @@ class AddStoryActivity : AppCompatActivity() {
                 REQUEST_CODE_PERMISSIONS
             )
         }
+
+        fusedLocation = LocationServices.getFusedLocationProviderClient(this)
 
         initUI()
         initAct()
@@ -108,6 +124,7 @@ class AddStoryActivity : AppCompatActivity() {
         binding.btnUpload.setOnClickListener {
             uploadImage()
         }
+        getMyLastLocation()
     }
 
     private fun initUI() {
@@ -158,33 +175,48 @@ class AddStoryActivity : AppCompatActivity() {
                 binding.edtStoryDesc.requestFocus()
                 binding.edtStoryDesc.error = getString(R.string.error_desc_empty)
             } else {
-                val descMediaTyped = description.toString().toRequestBody("text/plain".toMediaType())
+                val descMediaTyped =
+                    description.toString().toRequestBody("text/plain".toMediaType())
                 val requestImageFile = file.asRequestBody("image/jpeg".toMediaTypeOrNull())
                 val imageMultipart = MultipartBody.Part.createFormData(
                     "photo",
                     file.name,
                     requestImageFile
                 )
-                storyViewModel.addNewStory("Bearer $token", imageMultipart, descMediaTyped).observe(this) { response ->
-                    when (response) {
-                        is ApiResponse.Loading -> {
-                            showLoading(true)
-                        }
-                        is ApiResponse.Success -> {
-                            showLoading(false)
-                            showToast(getString(R.string.message_upload_success))
-                            finish()
-                        }
-                        is ApiResponse.Error -> {
-                            showLoading(false)
-                            showOkDialog(getString(R.string.title_upload_info), response.errorMessage)
-                        }
-                        else -> {
-                            showLoading(false)
-                            showToast(getString(R.string.message_unknown_error))
+                val latMediaTyped =
+                    location?.latitude.toString().toRequestBody("text/plain".toMediaType())
+                val lonMediaTyped =
+                    location?.longitude.toString().toRequestBody("text/plain".toMediaType())
+                storyViewModel.addNewStory(
+                    "Bearer $token",
+                    imageMultipart,
+                    descMediaTyped,
+                    latMediaTyped,
+                    lonMediaTyped
+                )
+                    .observe(this) { response ->
+                        when (response) {
+                            is ApiResponse.Loading -> {
+                                showLoading(true)
+                            }
+                            is ApiResponse.Success -> {
+                                showLoading(false)
+                                showToast(getString(R.string.message_upload_success))
+                                finish()
+                            }
+                            is ApiResponse.Error -> {
+                                showLoading(false)
+                                showOkDialog(
+                                    getString(R.string.title_upload_info),
+                                    response.errorMessage
+                                )
+                            }
+                            else -> {
+                                showLoading(false)
+                                showToast(getString(R.string.message_unknown_error))
+                            }
                         }
                     }
-                }
             }
         } else {
             showOkDialog("Information", "Pick an image")
@@ -222,6 +254,44 @@ class AddStoryActivity : AppCompatActivity() {
             currentPhotoPath = it.absolutePath
             intent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI)
             launchIntentCamera.launch(intent)
+        }
+    }
+
+    // get last location
+    @SuppressLint("MissingPermission")
+    private fun getMyLastLocation() {
+        if (allPermissionGranted()) {
+            fusedLocation.lastLocation.addOnSuccessListener { location: Location? ->
+                if (location != null) {
+                    binding.tvLocation.text =
+                        getAddressName(location.latitude, location.longitude, this)
+                    this.location = location
+                } else {
+                    showToast("Location not found")
+                }
+            }
+        } else {
+            launchRequestPermissionLocation.launch(
+                arrayOf(
+                    Manifest.permission.ACCESS_FINE_LOCATION,
+                    Manifest.permission.ACCESS_COARSE_LOCATION
+                )
+            )
+        }
+    }
+
+    // request permission gps launcher
+    private val launchRequestPermissionLocation = registerForActivityResult(
+        ActivityResultContracts.RequestMultiplePermissions()
+    ) { permission ->
+        when {
+            permission[Manifest.permission.ACCESS_FINE_LOCATION] ?: false -> {
+                getMyLastLocation()
+            }
+            permission[Manifest.permission.ACCESS_COARSE_LOCATION] ?: false -> {
+                getMyLastLocation()
+            }
+            else -> {}
         }
     }
 }

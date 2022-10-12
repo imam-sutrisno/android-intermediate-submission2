@@ -26,10 +26,10 @@ class StoryViewModel @Inject constructor(private val storyRepository: StoryRepos
         return result
     }
 
-    fun addNewStory(token: String, file: MultipartBody.Part, description: RequestBody): LiveData<ApiResponse<AddStoryResponse>> {
+    fun addNewStory(token: String, file: MultipartBody.Part, description: RequestBody, lat: RequestBody, lon: RequestBody): LiveData<ApiResponse<AddStoryResponse>> {
         val result = MutableLiveData<ApiResponse<AddStoryResponse>>()
         viewModelScope.launch {
-            storyRepository.addNewStory(token, file, description).collect {
+            storyRepository.addNewStory(token, file, description, lat, lon).collect {
                 result.postValue(it)
             }
         }
