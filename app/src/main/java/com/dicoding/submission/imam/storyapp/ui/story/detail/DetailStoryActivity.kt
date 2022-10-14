@@ -2,6 +2,7 @@ package com.dicoding.submission.imam.storyapp.ui.story.detail
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import com.dicoding.submission.imam.storyapp.data.local.entity.StoryEntity
 import com.dicoding.submission.imam.storyapp.data.model.Story
 import com.dicoding.submission.imam.storyapp.databinding.ActivityDetailStoryBinding
 import com.dicoding.submission.imam.storyapp.utils.TextConstValue
@@ -12,7 +13,7 @@ class DetailStoryActivity : AppCompatActivity() {
     private var _activityDetailStoryBinding: ActivityDetailStoryBinding? = null
     private val binding get() = _activityDetailStoryBinding!!
 
-    private lateinit var story: Story
+    private lateinit var story: StoryEntity
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

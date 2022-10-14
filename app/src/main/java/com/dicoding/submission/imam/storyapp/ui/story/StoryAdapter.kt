@@ -13,24 +13,29 @@ import com.dicoding.submission.imam.storyapp.utils.TextConstValue.BUNDLE_KEY_STO
 import com.dicoding.submission.imam.storyapp.utils.ext.setImageUrl
 import com.dicoding.submission.imam.storyapp.utils.ext.timeStamptoString
 import androidx.core.util.Pair
+import androidx.paging.PagingDataAdapter
+import androidx.recyclerview.widget.DiffUtil
+import com.dicoding.submission.imam.storyapp.data.local.entity.StoryEntity
 
-class StoryAdapter(private val storyList: List<Story>): RecyclerView.Adapter<StoryAdapter.StoryViewHolder>() {
+class StoryAdapter : PagingDataAdapter<StoryEntity, StoryAdapter.StoryViewHolder>(DIFF_CALLBACK) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): StoryViewHolder {
-        val binding = ItemRowStoryBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        val binding =
+            ItemRowStoryBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return StoryViewHolder(binding)
     }
 
     override fun onBindViewHolder(holder: StoryViewHolder, position: Int) {
-        storyList[position].let { story ->
-            holder.bind(story)
+        val data = getItem(position)
+        if (data != null) {
+            holder.bind(data)
         }
     }
 
-    override fun getItemCount(): Int = storyList.size
+    inner class StoryViewHolder(private val binding: ItemRowStoryBinding) :
+        RecyclerView.ViewHolder(binding.root) {
 
-    inner class StoryViewHolder(private val binding: ItemRowStoryBinding): RecyclerView.ViewHolder(binding.root) {
-        fun bind(story: Story) {
+        fun bind(story: StoryEntity) {
             with(binding) {
                 tvNameStory.text = story.name
                 tvDateStory.text = story.createdAt.timeStamptoString()
@@ -47,6 +52,24 @@ class StoryAdapter(private val storyList: List<Story>): RecyclerView.Adapter<Sto
                     Pair(binding.tvNameStory, "title"),
                 )
                 itemView.context.startActivity(intent, optionsCompat.toBundle())
+            }
+        }
+    }
+
+    companion object {
+        val DIFF_CALLBACK = object : DiffUtil.ItemCallback<StoryEntity>() {
+            override fun areItemsTheSame(
+                oldItem: StoryEntity,
+                newItem: StoryEntity
+            ): Boolean {
+                return oldItem == newItem
+            }
+
+            override fun areContentsTheSame(
+                oldItem: StoryEntity,
+                newItem: StoryEntity
+            ): Boolean {
+                return oldItem.id == newItem.id
             }
         }
     }

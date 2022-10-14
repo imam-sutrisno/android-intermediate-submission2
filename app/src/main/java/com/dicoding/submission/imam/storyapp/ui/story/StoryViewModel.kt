@@ -4,6 +4,9 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.paging.PagingData
+import androidx.paging.cachedIn
+import com.dicoding.submission.imam.storyapp.data.local.entity.StoryEntity
 import com.dicoding.submission.imam.storyapp.data.remote.ApiResponse
 import com.dicoding.submission.imam.storyapp.data.remote.story.AddStoryResponse
 import com.dicoding.submission.imam.storyapp.data.remote.story.GetStoryResponse
@@ -20,6 +23,16 @@ class StoryViewModel @Inject constructor(private val storyRepository: StoryRepos
         val result = MutableLiveData<ApiResponse<GetStoryResponse>>()
         viewModelScope.launch {
             storyRepository.getAllStory(token).collect{
+                result.postValue(it)
+            }
+        }
+        return result
+    }
+
+    fun getAllStoryPaging(token: String): LiveData<PagingData<StoryEntity>> {
+        val result = MutableLiveData<PagingData<StoryEntity>>()
+        viewModelScope.launch {
+            storyRepository.getAllStoryPaging(token).cachedIn(viewModelScope).collect{
                 result.postValue(it)
             }
         }

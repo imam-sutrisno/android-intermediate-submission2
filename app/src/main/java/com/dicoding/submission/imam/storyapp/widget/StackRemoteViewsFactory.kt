@@ -34,7 +34,12 @@ class StackRemoteViewsFactory(private val mContext: Context) : RemoteViewsServic
             stories.add(
                 StoryEntity(
                     it.id,
-                    it.photoUrl
+                    it.name,
+                    it.description,
+                    it.photoUrl,
+                    it.createdAt,
+                    it.lat,
+                    it.lon
                 )
             )
         }

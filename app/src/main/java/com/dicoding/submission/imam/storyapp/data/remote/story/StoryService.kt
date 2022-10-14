@@ -11,6 +11,13 @@ interface StoryService {
         @Header("Authorization") token: String
     ): GetStoryResponse
 
+    @GET("stories")
+    suspend fun getAllStoryPaging(
+        @Header("Authorization") token: String,
+        @Query("page") page: Int,
+        @Query("size") size: Int
+    ): GetStoryResponse
+
     @Multipart
     @POST("stories")
     suspend fun addNewStory(

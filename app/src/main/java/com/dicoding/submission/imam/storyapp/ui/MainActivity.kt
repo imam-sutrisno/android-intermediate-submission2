@@ -9,17 +9,22 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import androidx.activity.viewModels
+import androidx.core.view.isVisible
+import androidx.lifecycle.lifecycleScope
+import androidx.paging.LoadState
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.dicoding.submission.imam.storyapp.R
-import com.dicoding.submission.imam.storyapp.data.remote.ApiResponse
 import com.dicoding.submission.imam.storyapp.databinding.ActivityMainBinding
 import com.dicoding.submission.imam.storyapp.ui.profile.ProfileActivity
+import com.dicoding.submission.imam.storyapp.ui.story.LoadingStateAdapter
 import com.dicoding.submission.imam.storyapp.ui.story.StoryAdapter
 import com.dicoding.submission.imam.storyapp.ui.story.StoryViewModel
 import com.dicoding.submission.imam.storyapp.ui.story.add.AddStoryActivity
 import com.dicoding.submission.imam.storyapp.ui.story.maps.MapsActivity
 import com.dicoding.submission.imam.storyapp.utils.SessionManager
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import timber.log.Timber
 
 @AndroidEntryPoint
@@ -31,6 +36,8 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var pref: SessionManager
     private var token: String? = null
+
+    private lateinit var adapter: StoryAdapter
 
     companion object {
         fun start(context: Context) {
@@ -51,58 +58,65 @@ class MainActivity : AppCompatActivity() {
         Timber.tag(TAG).i(token)
 
         initUI()
+        initSwipeToRefresh()
         initAct()
 
-        getAllStory("Bearer $token")
+
+//        getAllStoryPaging(token!!)
+
+//        getAllStory("Bearer $token")
     }
 
     private fun initUI() {
+//        binding.tvGreetingName.text = getString(R.string.label_greeting_user, pref.getUserName)
+
+        // adapter
+        adapter = StoryAdapter()
+        binding.rvStory.adapter = adapter.withLoadStateHeaderAndFooter(
+            footer = LoadingStateAdapter { adapter.retry() },
+            header = LoadingStateAdapter { adapter.retry() }
+        )
         binding.rvStory.layoutManager = LinearLayoutManager(this)
-        binding.tvGreetingName.text = getString(R.string.label_greeting_user, pref.getUserName)
+        binding.rvStory.setHasFixedSize(true)
+
+        lifecycleScope.launchWhenCreated {
+            adapter.loadStateFlow.collect {
+                binding.swipeRefresh.isRefreshing = it.mediator?.refresh is LoadState.Loading
+            }
+        }
+
+        lifecycleScope.launch {
+            adapter.loadStateFlow.collectLatest { loadStates ->
+                binding.viewError.root.isVisible = loadStates.refresh is LoadState.Error
+            }
+            if (adapter.itemCount < 1) binding.viewError.root.visibility = View.VISIBLE
+            else binding.viewError.root.visibility = View.GONE
+        }
+
+        storyViewModel.getAllStoryPaging(token!!).observe(this) {
+            adapter.submitData(lifecycle, it)
+        }
     }
 
     private fun initAct() {
-        binding.btnProfile.setOnClickListener {
-            // ProfileActivity
-            ProfileActivity.start(this)
-        }
+//        binding.btnProfile.setOnClickListener {
+//            // ProfileActivity
+//            ProfileActivity.start(this)
+//        }
         binding.addNewStory.setOnClickListener {
             // AddStoryActivity
             AddStoryActivity.start(this)
         }
     }
 
-    private fun getAllStory(token: String) {
-        storyViewModel.getAllStory(token).observe(this) { response ->
-            when (response) {
-                is ApiResponse.Loading -> showLoading(true)
-                is ApiResponse.Success -> {
-                    showLoading(false)
-                    if (response.data.listStory.isEmpty()) {
-                        // jika tidak ada story
-                        binding.emptyStory.visibility = View.VISIBLE
-                    } else {
-                        binding.emptyStory.visibility = View.INVISIBLE
-                        val adapter = StoryAdapter(response.data.listStory)
-                        binding.rvStory.adapter = adapter
-                    }
-                }
-                is ApiResponse.Error -> showLoading(false)
-                else -> {
-                    Timber.tag(TAG).e(getString(R.string.message_unknown_error))
-                }
-            }
-        }
+    // update data when swipe
+    private fun initSwipeToRefresh() {
+        binding.swipeRefresh.setOnRefreshListener { adapter.refresh() }
     }
 
-    private fun showLoading(isLoading: Boolean) {
-        binding.progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
-        binding.bgLoading.visibility = if (isLoading) View.VISIBLE else View.GONE
-    }
-
-    override fun onResume() {
-        super.onResume()
-        getAllStory("Bearer $token")
+    override fun onDestroy() {
+        super.onDestroy()
+        _activityMainBinding = null
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -111,12 +125,15 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when(item.itemId) {
+        when (item.itemId) {
             R.id.menuSetting -> {
                 startActivity(Intent(Settings.ACTION_LOCALE_SETTINGS))
             }
             R.id.menuStoryLocation -> {
                 MapsActivity.start(this)
+            }
+            R.id.menuProfile -> {
+                ProfileActivity.start(this)
             }
         }
         return super.onOptionsItemSelected(item)

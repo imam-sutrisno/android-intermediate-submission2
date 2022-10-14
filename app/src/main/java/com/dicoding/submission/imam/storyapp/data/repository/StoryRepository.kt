@@ -1,5 +1,7 @@
 package com.dicoding.submission.imam.storyapp.data.repository
 
+import androidx.paging.PagingData
+import com.dicoding.submission.imam.storyapp.data.local.entity.StoryEntity
 import com.dicoding.submission.imam.storyapp.data.remote.ApiResponse
 import com.dicoding.submission.imam.storyapp.data.remote.story.AddStoryResponse
 import com.dicoding.submission.imam.storyapp.data.remote.story.GetStoryResponse
@@ -23,6 +25,10 @@ class StoryRepository @Inject constructor(private val storyDataSource: StoryData
     }
 
     suspend fun getStoryWithLocation(token: String): Flow<ApiResponse<GetStoryResponse>> {
-        return storyDataSource.getStoryWithLocation(token)
+        return storyDataSource.getStoryWithLocation(token).flowOn(Dispatchers.IO)
+    }
+
+    fun getAllStoryPaging(token: String): Flow<PagingData<StoryEntity>> {
+        return storyDataSource.getAllStoryPaging(token).flowOn(Dispatchers.IO)
     }
 }

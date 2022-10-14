@@ -9,6 +9,12 @@
         app:showAsAction="ifRoom" />
 
     <item
+        android:id="@+id/menuProfile"
+        android:title="Profile"
+        android:icon="@drawable/ic_account"
+        app:showAsAction="ifRoom" />
+
+    <item
         android:id="@+id/menuSetting"
         android:title="Setting"
         android:icon="@drawable/ic_settings"
