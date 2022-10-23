@@ -9,11 +9,11 @@ import android.content.pm.PackageManager
 import android.graphics.BitmapFactory
 import android.location.Location
 import android.net.Uri
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.MediaStore
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
@@ -21,6 +21,7 @@ import com.dicoding.submission.imam.storyapp.R
 import com.dicoding.submission.imam.storyapp.data.remote.ApiResponse
 import com.dicoding.submission.imam.storyapp.databinding.ActivityAddStoryBinding
 import com.dicoding.submission.imam.storyapp.ui.story.StoryViewModel
+import com.dicoding.submission.imam.storyapp.utils.MapsUtils.getAddressName
 import com.dicoding.submission.imam.storyapp.utils.SessionManager
 import com.dicoding.submission.imam.storyapp.utils.TextConstValue.CAMERA_X_RESULT
 import com.dicoding.submission.imam.storyapp.utils.TextConstValue.KEY_PICTURE
@@ -33,6 +34,7 @@ import com.dicoding.submission.imam.storyapp.utils.ext.showToast
 import com.dicoding.submission.imam.storyapp.utils.reduceFileImage
 import com.dicoding.submission.imam.storyapp.utils.uriToFile
 import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
 import dagger.hilt.android.AndroidEntryPoint
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
@@ -40,8 +42,6 @@ import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import java.io.File
-import com.dicoding.submission.imam.storyapp.utils.MapsUtils.getAddressName
-import com.google.android.gms.location.LocationServices
 
 @AndroidEntryPoint
 class AddStoryActivity : AppCompatActivity() {

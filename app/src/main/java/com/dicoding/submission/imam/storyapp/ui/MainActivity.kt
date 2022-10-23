@@ -2,13 +2,13 @@ package com.dicoding.submission.imam.storyapp.ui
 
 import android.content.Context
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.Settings
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import androidx.activity.viewModels
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
 import androidx.paging.LoadState
@@ -39,15 +39,6 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var adapter: StoryAdapter
 
-    companion object {
-        fun start(context: Context) {
-            val intent = Intent(context, MainActivity::class.java)
-            context.startActivity(intent)
-        }
-
-        private val TAG = MainActivity::class.java.simpleName
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         _activityMainBinding = ActivityMainBinding.inflate(layoutInflater)
@@ -61,14 +52,9 @@ class MainActivity : AppCompatActivity() {
         initSwipeToRefresh()
         initAct()
 
-
-//        getAllStoryPaging(token!!)
-
-//        getAllStory("Bearer $token")
     }
 
     private fun initUI() {
-//        binding.tvGreetingName.text = getString(R.string.label_greeting_user, pref.getUserName)
 
         // adapter
         adapter = StoryAdapter()
@@ -99,10 +85,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initAct() {
-//        binding.btnProfile.setOnClickListener {
-//            // ProfileActivity
-//            ProfileActivity.start(this)
-//        }
         binding.addNewStory.setOnClickListener {
             // AddStoryActivity
             AddStoryActivity.start(this)
@@ -137,5 +119,14 @@ class MainActivity : AppCompatActivity() {
             }
         }
         return super.onOptionsItemSelected(item)
+    }
+
+    companion object {
+        fun start(context: Context) {
+            val intent = Intent(context, MainActivity::class.java)
+            context.startActivity(intent)
+        }
+
+        private val TAG = MainActivity::class.java.simpleName
     }
 }

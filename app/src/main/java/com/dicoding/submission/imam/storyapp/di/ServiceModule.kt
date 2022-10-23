@@ -13,8 +13,10 @@ import retrofit2.Retrofit
 class ServiceModule {
 
     @Provides
-    fun provideAuthService(retrofit: Retrofit): AuthService = retrofit.create(AuthService::class.java)
+    fun provideAuthService(retrofit: Retrofit): AuthService =
+        retrofit.create(AuthService::class.java)
 
     @Provides
-    fun provideStoryService(retrofit: Retrofit): StoryService = retrofit.create(StoryService::class.java)
+    fun provideStoryService(retrofit: Retrofit): StoryService =
+        retrofit.create(StoryService::class.java)
 }

@@ -7,16 +7,20 @@ import android.util.AttributeSet
 import androidx.appcompat.widget.AppCompatEditText
 import com.dicoding.submission.imam.storyapp.utils.ext.isEmailValid
 
-class EmailEditText: AppCompatEditText {
-    constructor(context: Context): super(context) {
+class EmailEditText : AppCompatEditText {
+    constructor(context: Context) : super(context) {
         init()
     }
 
-    constructor(context: Context, attrs: AttributeSet): super(context, attrs) {
+    constructor(context: Context, attrs: AttributeSet) : super(context, attrs) {
         init()
     }
 
-    constructor(context: Context, attrs: AttributeSet, defStyleAttr: Int): super(context, attrs, defStyleAttr) {
+    constructor(context: Context, attrs: AttributeSet, defStyleAttr: Int) : super(
+        context,
+        attrs,
+        defStyleAttr
+    ) {
         init()
     }
 

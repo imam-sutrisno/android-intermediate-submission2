@@ -1,8 +1,8 @@
 package com.dicoding.submission.imam.storyapp.data.repository
 
 import com.dicoding.submission.imam.storyapp.data.remote.ApiResponse
-import com.dicoding.submission.imam.storyapp.data.remote.auth.LoginResponse
 import com.dicoding.submission.imam.storyapp.data.remote.auth.LoginBody
+import com.dicoding.submission.imam.storyapp.data.remote.auth.LoginResponse
 import com.dicoding.submission.imam.storyapp.data.remote.auth.RegBody
 import com.dicoding.submission.imam.storyapp.data.remote.auth.RegResponse
 import com.dicoding.submission.imam.storyapp.data.source.AuthDataSource

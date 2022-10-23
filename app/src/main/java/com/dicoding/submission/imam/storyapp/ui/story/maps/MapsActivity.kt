@@ -5,21 +5,18 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import com.dicoding.submission.imam.storyapp.R
 import com.dicoding.submission.imam.storyapp.data.remote.ApiResponse
 import com.dicoding.submission.imam.storyapp.databinding.ActivityMapsBinding
 import com.dicoding.submission.imam.storyapp.ui.story.StoryViewModel
-import com.dicoding.submission.imam.storyapp.ui.story.detail.DetailStoryActivity
 import com.dicoding.submission.imam.storyapp.utils.SessionManager
-import com.dicoding.submission.imam.storyapp.utils.TextConstValue.BUNDLE_KEY_STORY
 import com.dicoding.submission.imam.storyapp.utils.ext.showToast
-
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback

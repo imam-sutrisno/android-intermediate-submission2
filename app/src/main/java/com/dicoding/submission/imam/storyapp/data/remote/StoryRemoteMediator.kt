@@ -16,7 +16,10 @@ class StoryRemoteMediator(
     private val apiStoryService: StoryService,
     private val token: String
 ) : RemoteMediator<Int, StoryEntity>() {
-    override suspend fun load(loadType: LoadType, state: PagingState<Int, StoryEntity>): MediatorResult {
+    override suspend fun load(
+        loadType: LoadType,
+        state: PagingState<Int, StoryEntity>
+    ): MediatorResult {
         val page = when (loadType) {
             LoadType.REFRESH -> {
                 val remoteKeys = getRemoteKeyClosestToCurrentPosition(state)

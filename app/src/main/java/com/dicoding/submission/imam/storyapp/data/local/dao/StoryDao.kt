@@ -1,5 +1,6 @@
 package com.dicoding.submission.imam.storyapp.data.local.dao
 
+import androidx.lifecycle.LiveData
 import androidx.paging.PagingSource
 import androidx.room.Dao
 import androidx.room.Insert

@@ -1,24 +1,17 @@
 package com.dicoding.submission.imam.storyapp.widget
 
 import android.content.Context
-import android.content.Intent
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.widget.RemoteViews
 import android.widget.RemoteViewsService
-import androidx.core.os.bundleOf
 import androidx.room.Room
 import com.dicoding.submission.imam.storyapp.R
 import com.dicoding.submission.imam.storyapp.data.local.StoryAppDatabase
 import com.dicoding.submission.imam.storyapp.data.local.entity.StoryEntity
 import com.dicoding.submission.imam.storyapp.utils.urlToBitmap
-import java.io.IOException
-import java.io.InputStream
-import java.net.HttpURLConnection
-import java.net.URL
 
-class StackRemoteViewsFactory(private val mContext: Context) : RemoteViewsService.RemoteViewsFactory {
-    private var stories : MutableList<StoryEntity> = mutableListOf()
+class StackRemoteViewsFactory(private val mContext: Context) :
+    RemoteViewsService.RemoteViewsFactory {
+    private var stories: MutableList<StoryEntity> = mutableListOf()
 
     override fun onCreate() {
         // do nothing

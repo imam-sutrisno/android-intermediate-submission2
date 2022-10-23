@@ -5,17 +5,16 @@ import android.content.Intent
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.app.ActivityOptionsCompat
+import androidx.core.util.Pair
+import androidx.paging.PagingDataAdapter
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
-import com.dicoding.submission.imam.storyapp.data.model.Story
+import com.dicoding.submission.imam.storyapp.data.local.entity.StoryEntity
 import com.dicoding.submission.imam.storyapp.databinding.ItemRowStoryBinding
 import com.dicoding.submission.imam.storyapp.ui.story.detail.DetailStoryActivity
 import com.dicoding.submission.imam.storyapp.utils.TextConstValue.BUNDLE_KEY_STORY
 import com.dicoding.submission.imam.storyapp.utils.ext.setImageUrl
 import com.dicoding.submission.imam.storyapp.utils.ext.timeStamptoString
-import androidx.core.util.Pair
-import androidx.paging.PagingDataAdapter
-import androidx.recyclerview.widget.DiffUtil
-import com.dicoding.submission.imam.storyapp.data.local.entity.StoryEntity
 
 class StoryAdapter : PagingDataAdapter<StoryEntity, StoryAdapter.StoryViewHolder>(DIFF_CALLBACK) {
 

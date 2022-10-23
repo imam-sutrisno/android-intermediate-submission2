@@ -2,9 +2,9 @@ package com.dicoding.submission.imam.storyapp.ui.profile
 
 import android.content.Context
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
 import com.dicoding.submission.imam.storyapp.databinding.ActivityProfileBinding
 import com.dicoding.submission.imam.storyapp.ui.login.LoginActivity
 import com.dicoding.submission.imam.storyapp.utils.SessionManager

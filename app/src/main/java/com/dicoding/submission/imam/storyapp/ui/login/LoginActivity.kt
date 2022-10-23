@@ -2,10 +2,11 @@ package com.dicoding.submission.imam.storyapp.ui.login
 
 import android.content.Context
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import androidx.activity.viewModels
+import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import com.dicoding.submission.imam.storyapp.R
 import com.dicoding.submission.imam.storyapp.data.remote.ApiResponse
 import com.dicoding.submission.imam.storyapp.data.remote.auth.LoginBody
@@ -20,6 +21,7 @@ import com.dicoding.submission.imam.storyapp.utils.TextConstValue.KEY_USER_ID
 import com.dicoding.submission.imam.storyapp.utils.TextConstValue.KEY_USER_NAME
 import com.dicoding.submission.imam.storyapp.utils.ext.showToast
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 import timber.log.Timber
 
 @AndroidEntryPoint
@@ -82,34 +84,36 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun loginUser(req: LoginBody, email: String) {
-        loginViewModel.loginUser(req).observe(this) { response ->
-            when (response) {
-                is ApiResponse.Loading -> {
-                    showLoading(true)
-                }
-                is ApiResponse.Success -> {
-                    try {
-                        showLoading(false)
-                        val userData = response.data.loginResult
-                        // set session di preference
-                        pref.apply {
-                            setStringPreference(KEY_USER_ID, userData.userId)
-                            setStringPreference(KEY_TOKEN, userData.token)
-                            setStringPreference(KEY_USER_NAME, userData.name)
-                            setStringPreference(KEY_EMAIL, email)
-                            setBooleanPreference(KEY_IS_LOGIN, true)
-                        }
-                    } finally {
-                        MainActivity.start(this)
-                        finish()
+        lifecycleScope.launch {
+            loginViewModel.loginUser(req).collect { response ->
+                when (response) {
+                    is ApiResponse.Loading -> {
+                        showLoading(true)
                     }
-                }
-                is ApiResponse.Error -> {
-                    showLoading(false)
-                    Timber.tag(TAG).e(response.errorMessage)
-                }
-                else -> {
-                    showToast(getString(R.string.message_unknown_error))
+                    is ApiResponse.Success -> {
+                        try {
+                            showLoading(false)
+                            val userData = response.data.loginResult
+                            // set session di preference
+                            pref.apply {
+                                setStringPreference(KEY_USER_ID, userData.userId)
+                                setStringPreference(KEY_TOKEN, userData.token)
+                                setStringPreference(KEY_USER_NAME, userData.name)
+                                setStringPreference(KEY_EMAIL, email)
+                                setBooleanPreference(KEY_IS_LOGIN, true)
+                            }
+                        } finally {
+                            MainActivity.start(this@LoginActivity)
+                            finish()
+                        }
+                    }
+                    is ApiResponse.Error -> {
+                        showLoading(false)
+                        Timber.tag(TAG).e(response.errorMessage)
+                    }
+                    else -> {
+                        showToast(getString(R.string.message_unknown_error))
+                    }
                 }
             }
         }

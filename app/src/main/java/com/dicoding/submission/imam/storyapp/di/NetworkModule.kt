@@ -1,6 +1,6 @@
 package com.dicoding.submission.imam.storyapp.di
 
-import com.dicoding.submission.imam.storyapp.BuildConfig.BASE_URL
+import com.dicoding.submission.imam.storyapp.utils.BASE_URL
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -16,7 +16,7 @@ import java.util.concurrent.TimeUnit
 class NetworkModule {
 
     @Provides
-    fun providesOkHttpClient() : OkHttpClient{
+    fun providesOkHttpClient(): OkHttpClient {
         return OkHttpClient.Builder()
             .addInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY))
             .connectTimeout(150, TimeUnit.SECONDS)

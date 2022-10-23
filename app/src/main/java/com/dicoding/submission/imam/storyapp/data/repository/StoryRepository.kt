@@ -20,8 +20,15 @@ class StoryRepository @Inject constructor(private val storyDataSource: StoryData
         return storyDataSource.getAllStory(token).flowOn(Dispatchers.IO)
     }
 
-    suspend fun addNewStory(token: String, file: MultipartBody.Part, description: RequestBody, lat: RequestBody, lon: RequestBody): Flow<ApiResponse<AddStoryResponse>> {
-        return storyDataSource.addNewStory(token, file, description, lat, lon).flowOn(Dispatchers.IO)
+    suspend fun addNewStory(
+        token: String,
+        file: MultipartBody.Part,
+        description: RequestBody,
+        lat: RequestBody,
+        lon: RequestBody
+    ): Flow<ApiResponse<AddStoryResponse>> {
+        return storyDataSource.addNewStory(token, file, description, lat, lon)
+            .flowOn(Dispatchers.IO)
     }
 
     suspend fun getStoryWithLocation(token: String): Flow<ApiResponse<GetStoryResponse>> {

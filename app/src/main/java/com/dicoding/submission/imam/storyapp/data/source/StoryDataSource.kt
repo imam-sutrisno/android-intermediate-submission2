@@ -72,7 +72,13 @@ class StoryDataSource @Inject constructor(
         }
     }
 
-    suspend fun addNewStory(token: String, file: MultipartBody.Part, description: RequestBody, lat: RequestBody, lon: RequestBody): Flow<ApiResponse<AddStoryResponse>> {
+    suspend fun addNewStory(
+        token: String,
+        file: MultipartBody.Part,
+        description: RequestBody,
+        lat: RequestBody,
+        lon: RequestBody
+    ): Flow<ApiResponse<AddStoryResponse>> {
         return flow {
             try {
                 emit(ApiResponse.Loading)

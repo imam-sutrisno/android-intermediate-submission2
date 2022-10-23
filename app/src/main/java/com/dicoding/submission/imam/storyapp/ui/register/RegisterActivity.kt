@@ -2,12 +2,12 @@ package com.dicoding.submission.imam.storyapp.ui.register
 
 import android.content.Context
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.view.View
 import androidx.activity.viewModels
+import androidx.appcompat.app.AppCompatActivity
 import com.dicoding.submission.imam.storyapp.R
 import com.dicoding.submission.imam.storyapp.data.remote.ApiResponse
 import com.dicoding.submission.imam.storyapp.data.remote.auth.RegBody
@@ -52,9 +52,12 @@ class RegisterActivity : AppCompatActivity() {
 
             Handler(Looper.getMainLooper()).postDelayed({
                 when {
-                    userName.isBlank() -> binding.editName.error = getString(R.string.error_empty_name)
-                    userEmail.isBlank() -> binding.editEmail.error = getString(R.string.error_empty_email)
-                    userPassword.isBlank() -> binding.editPassword.error = getString(R.string.error_empty_password)
+                    userName.isBlank() -> binding.editName.error =
+                        getString(R.string.error_empty_name)
+                    userEmail.isBlank() -> binding.editEmail.error =
+                        getString(R.string.error_empty_email)
+                    userPassword.isBlank() -> binding.editPassword.error =
+                        getString(R.string.error_empty_password)
                     else -> {
                         val req = RegBody(
                             userName, userEmail, userPassword
@@ -71,7 +74,7 @@ class RegisterActivity : AppCompatActivity() {
 
     private fun registerUser(req: RegBody) {
         registerViewModel.registerUser(req).observe(this) { response ->
-            when(response) {
+            when (response) {
                 is ApiResponse.Loading -> {
                     showLoading(true)
                 }
