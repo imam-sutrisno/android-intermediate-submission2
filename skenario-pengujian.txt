@@ -1,0 +1,101 @@
+END TO END TEST @LargeTest
+>>> MainActivityEndToEndTest
+    1. loadStory_Success()
+        - Asumsi user telah login
+ 	 	- Melihat List Cerita
+ 	 	- Memastikan bahwa MainActivity terbuka
+ 	 	- Memastikan bahwa RecyclerView tampil
+ 	 	- Memastikan bahwa SwipeRefreshLayout tampil
+ 	 	- Memastikan bahwa tombol untuk tambah story tampil
+ 	 	- Memastikan bahwa menu untuk melihat story pada google maps tampil
+ 	 	- Memastikan bahwa menu untuk melihat profile dan logout tampil
+ 	 	- Memastikan bahwa RecyclerView berkerja dengan baik ketika di scroll
+ 	
+ 	2. loadDetailStory_Success()
+ 		- Asumsi user telah login
+ 		- Melihat List Cerita
+ 		- Melakukan aksi klik pada item kedua di RecyclerView
+ 		- Memastikan bahwa gambar story tampil
+ 		- Memastikan bahwa nama pengirim story tampil
+ 		- Memastikan bahwa deskripsi story tampil
+
+ 	3. loadMapStory_Success()
+ 		- Asumsi user telah login dan memperbolehkan aplikasi untuk menggunakan service lokasi
+ 		- Melihat List Cerita
+ 		- Melakukan aksi klik pada menu untuk melihat story pada google map
+ 		- Memastikan bahwa map tampil
+
+ 	4. loadAddStory_Success()
+ 		- Asumsi user telah login
+ 		- Melihat List Cerita
+ 		- Melakukan aksi klik pada tombol untuk posting story
+ 		- Memastikan bahwa tempat untuk preview gambar tampil
+ 		- Memastikan bahwa tombol untuk membuka kamera tampil
+ 		- Memastikan bahwa tombol untuk membuka galeri tampil
+ 		- Memastikan bahwa form description tampil
+ 		- Memastikan bahwa keterangan lokasi tampil
+ 		- Memastikan bahwa tombol untuk upload story tampil
+
+
+INTEGRATION TEST @MediumTest
+>>> MainActivityTest
+    1. getStory_Success() [Pengecekan pengambilan data story dari network]
+		- Memastikan bahwa story tampil
+		- Memastikan bahwa story dengan kata "pakani" tampil
+		- Memastikan bahwa dapat dilakukan scroll
+
+  	2. getStory_Error() [Pengecekan pengambilan data story dari network]
+		- Memastikan bahwa story tampil, jika ada dalam local database
+		- Memastikan bahwa TextView "Something went wrong. Please check your connection" tampil
+
+
+UNIT TEST
+1. StoryRepositoryTest
+    - Ketika fungsi getAllStoryPaging() dipanggil seharusnya tidak mengembalikan nilai null dan mengembalikan PagingData
+    - Ketika fungsi addNewStory() dipanggil maka seharusnya tidak mengembalikan nilai null
+    - Ketika fungsi getStoryWithLocation() dipanggil maka seharusnya tidak mengembalikan nilai null dan mengembalikan data story
+
+2. AuthRepositoryTest
+    - Ketika fungsi registerUser() dipanggil seharusnya tidak mengembalikan nilai null
+    - Ketika fungsi loginUser() dipanggil maka seharusnya tidak mengembalikan nilai null dan mengembalikan nilai user
+
+3. LoginViewModelTest
+    - Ketika berhasil login,
+      ApiResponse.Success bernilai true,
+      response tidak bernilai null,
+      response data dan contoh data sama
+    - Ketika gagal login,
+      ApiResponse.Error bernilai true,
+      response tidak bernilai null,
+      response message bernilai "Failed to Login"
+
+4. RegisterViewModelTest
+    - Ketika register berhasil,
+      actualResponse tidak bernilai null,
+      actualResponse adalah ApiResponse.Success bernilai true,
+      dummyRegisterSuccess.body() dan actualResponse.data.body() bernilai sama,
+      yang berarti mengembalikan nilai data yang sama
+
+    - Ketika register gagal,
+      actualResponse tidak bernilai null,
+      actualResponse adalah ApiResponse.Error bernilai true,
+      expectedResponse.value dan actualResponse.errorMessage bernilai sama, yang berarti mengembalikan nilai error yang sama
+
+5. StoryViewModelTest
+    - Ketika berhasil mendapatkan data story dengan lokasi,
+      actualResponse tidak bernilai null,
+      actualResponse adalah ApiResponse.Success bernilai true,
+      expectedResponse.value dan actualResponse bernilai sama, yang berarti mengembalikan response yang sama
+    - Ketika gagal mendapatkan data story dengan lokasi,
+      actualResponse tidak bernilai null,
+      actualResponse adalah ApiResponse.Error bernilai true,
+      expectedResponse.value dan actualResponse bernilai sama, yang berarti mengembalikan response yang sama
+    - Ketika berhasil mendapatkan data story,
+      memastikan bahwa data tidak kosong,
+      memastikan bahwa ukuran data asli dengan data dummy sama
+    - Ketika berhasil menambahkan story,
+      memastikan bahwa response tidak null,
+      memastikan bahwa response ApiResponse.Success
+    - Ketika gagal menambahkan story,
+      memastikan bahwa response tidak null,
+      memastikan bahwa response ApiResponse.Error
