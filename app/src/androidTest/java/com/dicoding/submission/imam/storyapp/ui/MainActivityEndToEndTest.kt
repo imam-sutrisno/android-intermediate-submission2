@@ -46,9 +46,9 @@ class MainActivityEndToEndTest {
     fun loadStory_Success() {
         onView(withId(R.id.rvStory)).check(matches(isDisplayed()))
         onView(withId(R.id.swipeRefresh)).check(matches(isDisplayed()))
-        onView(withId(R.id.emptyStory)).check(matches(isDisplayed()))
         onView(withId(R.id.addNewStory)).check(matches(isDisplayed()))
-        onView(withId(R.id.view_error)).check(matches(isDisplayed()))
+        onView(withId(R.id.menuStoryLocation)).check(matches(isDisplayed()))
+        onView(withId(R.id.menuProfile)).check(matches(isDisplayed()))
         onView(withId(R.id.rvStory)).perform(
             RecyclerViewActions.scrollToPosition<RecyclerView.ViewHolder>(
                 7

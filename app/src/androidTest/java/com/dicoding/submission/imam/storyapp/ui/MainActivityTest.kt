@@ -41,13 +41,12 @@ class MainActivityTest {
 
     @Test
     fun getAllStory_Success() {
+        ActivityScenario.launch(MainActivity::class.java)
 
         val mockResponse = MockResponse()
             .setResponseCode(200)
             .setBody(JsonConverter.readStringFromFile("response.json"))
         mockWebServer.enqueue(mockResponse)
-
-        ActivityScenario.launch(MainActivity::class.java)
 
         onView(withId(R.id.rvStory)).check(matches(isDisplayed()))
 
@@ -56,6 +55,23 @@ class MainActivityTest {
         onView(withId(R.id.rvStory)).perform(
             RecyclerViewActions.scrollToPosition<RecyclerView.ViewHolder>(
                 6
+            )
+        )
+    }
+
+    @Test
+    fun getAllStory_Error() {
+        ActivityScenario.launch(MainActivity::class.java)
+
+        val mockResponse = MockResponse()
+            .setResponseCode(500)
+        mockWebServer.enqueue(mockResponse)
+
+        onView(withId(R.id.rvStory)).check(matches(isDisplayed()))
+
+        onView(withText("Something went wrong. Please check your connection")).check(
+            matches(
+                isDisplayed()
             )
         )
     }

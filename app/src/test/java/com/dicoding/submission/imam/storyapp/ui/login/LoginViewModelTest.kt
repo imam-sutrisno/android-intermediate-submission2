@@ -55,6 +55,7 @@ class LoginViewModelTest {
         `when`(loginViewModel.loginUser(loginBody)).thenReturn(expectedResponse)
 
         loginViewModel.loginUser(loginBody).collect { response ->
+            Assert.assertTrue(response is ApiResponse.Success)
             if (response is ApiResponse.Success) {
                 Assert.assertNotNull(response)
                 Assert.assertSame(dummyResult, response.data)
@@ -65,15 +66,17 @@ class LoginViewModelTest {
     }
 
     @Test
-    fun `when login failed and get error result Exception`() = runTest {
+    fun `when loginUser() failed and get error result Exception`() = runTest {
         val expectedResponse =
             flowOf<ApiResponse<LoginResponse>>(ApiResponse.Error("Failed to Login"))
 
         `when`(loginViewModel.loginUser(loginBody)).thenReturn(expectedResponse)
 
         loginViewModel.loginUser(loginBody).collect { response ->
+            Assert.assertTrue(response is ApiResponse.Error)
             if (response is ApiResponse.Error) {
                 Assert.assertNotNull(response)
+                Assert.assertSame("Failed to Login", response.errorMessage)
             }
         }
 

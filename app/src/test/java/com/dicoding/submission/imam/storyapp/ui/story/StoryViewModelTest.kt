@@ -69,6 +69,7 @@ class StoryViewModelTest {
 
         Assert.assertNotNull(actualResponse)
         Assert.assertTrue(actualResponse is ApiResponse.Success)
+        Assert.assertSame(expectedResponse.value, actualResponse)
     }
 
     @Test
@@ -84,6 +85,7 @@ class StoryViewModelTest {
 
         Assert.assertNotNull(actualResponse)
         Assert.assertTrue(actualResponse is ApiResponse.Error)
+        Assert.assertSame(expectedResponse.value, actualResponse)
     }
 
     @Test
