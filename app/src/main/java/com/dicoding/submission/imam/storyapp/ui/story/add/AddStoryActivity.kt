@@ -17,6 +17,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
+import androidx.lifecycle.lifecycleScope
 import com.dicoding.submission.imam.storyapp.R
 import com.dicoding.submission.imam.storyapp.data.remote.ApiResponse
 import com.dicoding.submission.imam.storyapp.databinding.ActivityAddStoryBinding
@@ -36,6 +37,7 @@ import com.dicoding.submission.imam.storyapp.utils.uriToFile
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
@@ -187,6 +189,7 @@ class AddStoryActivity : AppCompatActivity() {
                     location?.latitude.toString().toRequestBody("text/plain".toMediaType())
                 val lonMediaTyped =
                     location?.longitude.toString().toRequestBody("text/plain".toMediaType())
+
                 storyViewModel.addNewStory(
                     "Bearer $token",
                     imageMultipart,
@@ -217,6 +220,7 @@ class AddStoryActivity : AppCompatActivity() {
                             }
                         }
                     }
+
             }
         } else {
             showOkDialog("Information", "Pick an image")

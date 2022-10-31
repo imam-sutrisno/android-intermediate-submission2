@@ -12,6 +12,7 @@ import com.dicoding.submission.imam.storyapp.data.remote.story.AddStoryResponse
 import com.dicoding.submission.imam.storyapp.data.remote.story.GetStoryResponse
 import com.dicoding.submission.imam.storyapp.data.repository.StoryRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -20,6 +21,7 @@ import javax.inject.Inject
 @HiltViewModel
 class StoryViewModel @Inject constructor(private val storyRepository: StoryRepository) :
     ViewModel() {
+
     fun getAllStory(token: String): LiveData<ApiResponse<GetStoryResponse>> {
         val result = MutableLiveData<ApiResponse<GetStoryResponse>>()
         viewModelScope.launch {
@@ -31,6 +33,7 @@ class StoryViewModel @Inject constructor(private val storyRepository: StoryRepos
     }
 
     fun getAllStoryPaging(token: String): LiveData<PagingData<StoryEntity>> {
+//        return storyRepository.getAllStoryPaging(token).cachedIn(viewModelScope)
         val result = MutableLiveData<PagingData<StoryEntity>>()
         viewModelScope.launch {
             storyRepository.getAllStoryPaging(token).cachedIn(viewModelScope).collect {
@@ -47,6 +50,7 @@ class StoryViewModel @Inject constructor(private val storyRepository: StoryRepos
         lat: RequestBody,
         lon: RequestBody
     ): LiveData<ApiResponse<AddStoryResponse>> {
+//        return storyRepository.addNewStory(token, file, description, lat, lon)
         val result = MutableLiveData<ApiResponse<AddStoryResponse>>()
         viewModelScope.launch {
             storyRepository.addNewStory(token, file, description, lat, lon).collect {
@@ -57,6 +61,7 @@ class StoryViewModel @Inject constructor(private val storyRepository: StoryRepos
     }
 
     fun getStoryWithLocation(token: String): LiveData<ApiResponse<GetStoryResponse>> {
+//        return storyRepository.getStoryWithLocation(token)
         val result = MutableLiveData<ApiResponse<GetStoryResponse>>()
         viewModelScope.launch {
             storyRepository.getStoryWithLocation(token).collect {

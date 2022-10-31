@@ -8,6 +8,7 @@ import android.os.Looper
 import android.view.View
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import com.dicoding.submission.imam.storyapp.R
 import com.dicoding.submission.imam.storyapp.data.remote.ApiResponse
 import com.dicoding.submission.imam.storyapp.data.remote.auth.RegBody
@@ -17,6 +18,7 @@ import com.dicoding.submission.imam.storyapp.utils.TimeConstValue
 import com.dicoding.submission.imam.storyapp.utils.ext.showOkDialog
 import com.dicoding.submission.imam.storyapp.utils.ext.showToast
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 import timber.log.Timber
 
 @AndroidEntryPoint
@@ -73,29 +75,31 @@ class RegisterActivity : AppCompatActivity() {
     }
 
     private fun registerUser(req: RegBody) {
-        registerViewModel.registerUser(req).observe(this) { response ->
-            when (response) {
-                is ApiResponse.Loading -> {
-                    showLoading(true)
-                }
-                is ApiResponse.Success -> {
-                    try {
-                        showLoading(false)
-                    } finally {
-                        LoginActivity.start(this)
-                        finish()
-                        showToast(getString(R.string.message_register_success))
-                        var messageRes = response.data.body()?.message
-                        Timber.tag(TAG).i(messageRes.toString())
+        lifecycleScope.launch {
+            registerViewModel.registerUser(req).collect { response ->
+                when (response) {
+                    is ApiResponse.Loading -> {
+                        showLoading(true)
                     }
-                }
-                is ApiResponse.Error -> {
-                    showLoading(false)
-                    Timber.tag(TAG).e(response.errorMessage)
-                    showOkDialog(getString(R.string.title_dialog_error), response.errorMessage)
-                }
-                else -> {
-                    showToast(getString(R.string.message_unknown_error))
+                    is ApiResponse.Success -> {
+                        try {
+                            showLoading(false)
+                        } finally {
+                            LoginActivity.start(this@RegisterActivity)
+                            finish()
+                            showToast(getString(R.string.message_register_success))
+                            val messageRes = response.data.body()?.message
+                            Timber.tag(TAG).i(messageRes.toString())
+                        }
+                    }
+                    is ApiResponse.Error -> {
+                        showLoading(false)
+                        Timber.tag(TAG).e(response.errorMessage)
+                        showOkDialog(getString(R.string.title_dialog_error), response.errorMessage)
+                    }
+                    else -> {
+                        showToast(getString(R.string.message_unknown_error))
+                    }
                 }
             }
         }

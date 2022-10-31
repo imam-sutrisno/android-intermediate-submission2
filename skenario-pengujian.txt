@@ -70,16 +70,15 @@ UNIT TEST
       response message bernilai "Failed to Login"
 
 4. RegisterViewModelTest
-    - Ketika register berhasil,
-      actualResponse tidak bernilai null,
-      actualResponse adalah ApiResponse.Success bernilai true,
-      dummyRegisterSuccess.body() dan actualResponse.data.body() bernilai sama,
-      yang berarti mengembalikan nilai data yang sama
+    - Ketika berhasil register,
+      ApiResponse.Success bernilai true,
+      response tidak bernilai null,
+      response data dan contoh data sama
 
-    - Ketika register gagal,
-      actualResponse tidak bernilai null,
-      actualResponse adalah ApiResponse.Error bernilai true,
-      expectedResponse.value dan actualResponse.errorMessage bernilai sama, yang berarti mengembalikan nilai error yang sama
+    - Ketika gagal login,
+      ApiResponse.Error bernilai true,
+      response tidak bernilai null,
+      response message bernilai "Register failed"
 
 5. StoryViewModelTest
     - Ketika berhasil mendapatkan data story dengan lokasi,

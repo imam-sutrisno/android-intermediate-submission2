@@ -12,8 +12,8 @@ import javax.inject.Singleton
 @Singleton
 class AuthDataSource @Inject constructor(private val authService: AuthService) {
 
-    suspend fun registerUser(regBody: RegBody): Flow<ApiResponse<Response<RegResponse>>> {
-        return flow {
+    suspend fun registerUser(regBody: RegBody): Flow<ApiResponse<Response<RegResponse>>> =
+        flow {
             try {
                 emit(ApiResponse.Loading)
                 val response = authService.registerUser(regBody)
@@ -27,7 +27,6 @@ class AuthDataSource @Inject constructor(private val authService: AuthService) {
                 emit(ApiResponse.Error(ex.message.toString()))
             }
         }
-    }
 
     suspend fun loginUser(loginBody: LoginBody): Flow<ApiResponse<LoginResponse>> {
         return flow {

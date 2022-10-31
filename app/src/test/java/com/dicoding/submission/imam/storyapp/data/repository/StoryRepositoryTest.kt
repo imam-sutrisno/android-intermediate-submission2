@@ -4,8 +4,10 @@ import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.paging.AsyncPagingDataDiffer
 import androidx.recyclerview.widget.ListUpdateCallback
 import com.dicoding.submission.imam.storyapp.data.DataDummyFakeStoryService
-import com.dicoding.submission.imam.storyapp.data.remote.FakeStoryService
+import com.dicoding.submission.imam.storyapp.data.local.StoryAppDatabase
+import com.dicoding.submission.imam.storyapp.data.remote.ApiResponse
 import com.dicoding.submission.imam.storyapp.data.remote.story.StoryService
+import com.dicoding.submission.imam.storyapp.data.source.StoryDataSource
 import com.dicoding.submission.imam.storyapp.ui.story.StoryAdapter
 import com.dicoding.submission.imam.storyapp.util.MainCourotineRule
 import com.dicoding.submission.imam.storyapp.util.PagedTestDataSource
@@ -19,6 +21,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.Mock
 import org.mockito.Mockito.`when`
+import org.mockito.Mockito.mock
 import org.mockito.junit.MockitoJUnitRunner
 
 @ExperimentalCoroutinesApi
@@ -28,8 +31,13 @@ class StoryRepositoryTest {
     var instantExecutorRule = InstantTaskExecutorRule()
 
     @Mock
+    private lateinit var storyDataSource: StoryDataSource
     private lateinit var storyRepository: StoryRepository
+    private lateinit var storyRepositoryMock: StoryRepository
     private lateinit var storyService: StoryService
+
+    @Mock
+    private lateinit var storyAppDatabase: StoryAppDatabase
 
     @Mock
     private var dummyMultipart = DataDummyFakeStoryService.generateDummyMultipartFile()
@@ -39,7 +47,12 @@ class StoryRepositoryTest {
 
     @Before
     fun setUp() {
-        storyService = FakeStoryService()
+        storyService = mock(StoryService::class.java)
+        storyAppDatabase = mock(StoryAppDatabase::class.java)
+        storyDataSource = StoryDataSource(storyService, storyAppDatabase)
+
+        storyRepositoryMock = mock(StoryRepository::class.java)
+        storyRepository = StoryRepository(storyDataSource)
     }
 
     @Test
@@ -50,9 +63,9 @@ class StoryRepositoryTest {
         val data = PagedTestDataSource.snapshot(dummyStory)
 
         val expectedResult = flowOf(data)
-        `when`(storyRepository.getAllStoryPaging("token")).thenReturn(expectedResult)
+        `when`(storyRepositoryMock.getAllStoryPaging("token")).thenReturn(expectedResult)
 
-        storyRepository.getAllStoryPaging("token").collect {
+        storyRepositoryMock.getAllStoryPaging("token").collect {
             val differ = AsyncPagingDataDiffer(
                 StoryAdapter.DIFF_CALLBACK,
                 listUpdateCallback,
@@ -72,24 +85,43 @@ class StoryRepositoryTest {
     @Test
     fun `when addNewStory() is called should not null`() = runTest {
         val expectedResponses = DataDummyFakeStoryService.generateDummyAddStoryResponseSuccess()
-        val actualResponse = storyService.addNewStory(
+
+        `when`(
+            storyService.addNewStory(
+                "token",
+                dummyMultipart,
+                dummyDescription,
+                dummyLatitude,
+                dummyLongitude
+            )
+        ).thenReturn(expectedResponses)
+
+        storyRepository.addNewStory(
             "token",
             dummyMultipart,
             dummyDescription,
             dummyLatitude,
             dummyLongitude
-        )
-        Assert.assertNotNull(actualResponse)
-        Assert.assertEquals(expectedResponses, actualResponse)
+        ).collect { response ->
+            if (response is ApiResponse.Success) {
+                Assert.assertNotNull(response)
+                Assert.assertEquals(expectedResponses, response.data)
+            }
+        }
     }
 
     @Test
     fun `when getStoryWithLocation() is called should not null`() = runTest {
         val expectedResponse = DataDummyFakeStoryService.generateDummyStoryResponseSuccess()
-        val actualResponse = storyService.getStoryWithLocation("token", 1)
 
-        Assert.assertNotNull(actualResponse)
-        Assert.assertEquals(expectedResponse.listStory.size, actualResponse.listStory.size)
+        `when`(storyService.getStoryWithLocation("token", 1)).thenReturn(expectedResponse)
+
+        storyRepository.getStoryWithLocation("token").collect { response ->
+            if (response is ApiResponse.Success) {
+                Assert.assertNotNull(response)
+                Assert.assertEquals(expectedResponse, response.data)
+            }
+        }
     }
 
     private val listUpdateCallback = object : ListUpdateCallback {

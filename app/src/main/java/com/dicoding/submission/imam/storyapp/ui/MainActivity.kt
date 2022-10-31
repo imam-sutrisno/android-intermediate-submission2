@@ -12,6 +12,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
 import androidx.paging.LoadState
+import androidx.paging.cachedIn
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.dicoding.submission.imam.storyapp.R
 import com.dicoding.submission.imam.storyapp.databinding.ActivityMainBinding
@@ -23,6 +24,7 @@ import com.dicoding.submission.imam.storyapp.ui.story.add.AddStoryActivity
 import com.dicoding.submission.imam.storyapp.ui.story.maps.MapsActivity
 import com.dicoding.submission.imam.storyapp.utils.SessionManager
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -94,6 +96,11 @@ class MainActivity : AppCompatActivity() {
     // update data when swipe
     private fun initSwipeToRefresh() {
         binding.swipeRefresh.setOnRefreshListener { adapter.refresh() }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        adapter.refresh()
     }
 
     override fun onDestroy() {
